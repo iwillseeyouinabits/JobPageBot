@@ -179,7 +179,7 @@ public class App {
 				System.out.println(3+36+48+33+175 + " " + tfs.length);
 				Thread runner = new Thread(new Runner2GlassDoor(url, email, pass, btn, btnIfElse, select, typeIfLabel));
 				runner.start();
-//					JOptionPane.showMessageDialog(null,  + " Jobs Applied To!", "Finish", JOptionPane.PLAIN_MESSAGE);
+//				JOptionPane.showMessageDialog(null,  + " Jobs Applied To!", "Finish", JOptionPane.PLAIN_MESSAGE);
 			}
 		});
 		
