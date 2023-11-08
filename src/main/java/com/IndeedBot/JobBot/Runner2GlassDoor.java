@@ -89,7 +89,7 @@ public class Runner2GlassDoor implements Runnable {
 		}
 		System.out.println("->" + driver.findElements(By.xpath(
 				"//span[contains(translate(text(), 'ABCDEFGHIJKLMNOPQRSTUVWXYZ', 'abcdefghijklmnopqrstuvwxyz'), 'show more jobs')]"))
-		.size());
+				.size());
 		String lastItemId = "";
 		while (driver.findElements(By.xpath(
 				"//span[contains(translate(text(), 'ABCDEFGHIJKLMNOPQRSTUVWXYZ', 'abcdefghijklmnopqrstuvwxyz'), 'show more jobs')]"))
@@ -102,9 +102,10 @@ public class Runner2GlassDoor implements Runnable {
 				}
 				Thread.sleep(2000);
 				driver.findElement(By.xpath(
-						"//span[contains(translate(text(), 'ABCDEFGHIJKLMNOPQRSTUVWXYZ', 'abcdefghijklmnopqrstuvwxyz'), 'show more jobs')]")).findElement(By.xpath("parent::*")).findElement(By.xpath("parent::*"))
-						.click();
-				String tempLastItemId = driver.findElements(By.className("css-1nh9iuj")).get(driver.findElements(By.className("css-1nh9iuj")).size()-1).getAttribute("href");
+						"//span[contains(translate(text(), 'ABCDEFGHIJKLMNOPQRSTUVWXYZ', 'abcdefghijklmnopqrstuvwxyz'), 'show more jobs')]"))
+						.findElement(By.xpath("parent::*")).findElement(By.xpath("parent::*")).click();
+				String tempLastItemId = driver.findElements(By.className("css-1nh9iuj"))
+						.get(driver.findElements(By.className("css-1nh9iuj")).size() - 1).getAttribute("href");
 				if (tempLastItemId.equals(lastItemId)) {
 					break;
 				} else {
@@ -121,11 +122,11 @@ public class Runner2GlassDoor implements Runnable {
 				Thread.sleep(7000);
 				jobPages.get(jobInd).click();
 				Thread.sleep(2000);
-				
+
 				driver.findElement(By.xpath(
 						"//button//span[contains(translate(text(), 'ABCDEFGHIJKLMNOPQRSTUVWXYZ', 'abcdefghijklmnopqrstuvwxyz'), 'easy apply')]"))
 						.click();
-				
+
 				ArrayList<String> tabs = new ArrayList<String>(driver.getWindowHandles());
 				driver.switchTo().window(tabs.get(tabs.size() - 1));
 
@@ -228,8 +229,9 @@ public class Runner2GlassDoor implements Runnable {
 			driver.findElement(By.id("resume-upload"))
 					.sendKeys("C:\\Users\\isaac\\Desktop\\Java_Workspace\\JobBot\\resume.pdf");
 			try {
-			driver.findElement(By.id("resume-upload")).submit();
-			} catch(Exception e) {}
+				driver.findElement(By.id("resume-upload")).submit();
+			} catch (Exception e) {
+			}
 			System.out.println(driver.findElements(By.id("resume-upload")).size());
 		}
 
@@ -251,7 +253,9 @@ public class Runner2GlassDoor implements Runnable {
 
 		List<WebElement> labels = driver.findElements(By.cssSelector(".css-dtssv9.es2vvo70")).size() > 0
 				? driver.findElements(By.cssSelector(".css-dtssv9.es2vvo70"))
-				: driver.findElements(By.cssSelector(".css-132vple.es2vvo70"));
+				: driver.findElements(By.cssSelector(".css-132vple.es2vvo70")).size() > 0
+						? driver.findElements(By.cssSelector(".css-132vple.es2vvo70"))
+						: driver.findElements(By.cssSelector(".css-1v67kj9.e1wnkr790"));
 		for (WebElement label : labels) {
 			for (ArrayList<String> set : this.typeIfLabel) {
 				String[] setIf = new String[set.size() - 1];
