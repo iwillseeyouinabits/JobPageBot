@@ -6,6 +6,7 @@ import java.util.List;
 
 import javax.swing.JOptionPane;
 
+import org.openqa.selenium.Alert;
 import org.openqa.selenium.By;
 import org.openqa.selenium.Dimension;
 import org.openqa.selenium.JavascriptExecutor;
@@ -17,6 +18,7 @@ import org.openqa.selenium.chrome.ChromeOptions;
 import org.openqa.selenium.edge.EdgeDriver;
 import org.openqa.selenium.edge.EdgeOptions;
 import org.openqa.selenium.firefox.FirefoxDriver;
+import org.openqa.selenium.interactions.Actions;
 import org.openqa.selenium.remote.DesiredCapabilities;
 
 public class Runner2GlassDoor implements Runnable {
@@ -87,60 +89,53 @@ public class Runner2GlassDoor implements Runnable {
 		} catch (InterruptedException e3) {
 			e3.printStackTrace();
 		}
-		System.out.println("->" + driver.findElements(By.xpath(
-				"//span[contains(translate(text(), 'ABCDEFGHIJKLMNOPQRSTUVWXYZ', 'abcdefghijklmnopqrstuvwxyz'), 'show more jobs')]"))
-				.size());
-		String lastItemId = "";
 		while (driver.findElements(By.xpath(
 				"//span[contains(translate(text(), 'ABCDEFGHIJKLMNOPQRSTUVWXYZ', 'abcdefghijklmnopqrstuvwxyz'), 'show more jobs')]"))
 				.size() > 0) {
 			try {
 				Thread.sleep(2000);
 				if (driver.findElements(By.cssSelector(".e1jbctw80.ei0fd8p1.css-1n14mz9.e1q8sty40")).size() > 0) {
-					System.out.println("Close Popup");
 					driver.findElement(By.cssSelector(".e1jbctw80.ei0fd8p1.css-1n14mz9.e1q8sty40")).click();
 				}
-				Thread.sleep(2000);
-				driver.findElement(By.xpath(
-						"//span[contains(translate(text(), 'ABCDEFGHIJKLMNOPQRSTUVWXYZ', 'abcdefghijklmnopqrstuvwxyz'), 'show more jobs')]"))
-						.findElement(By.xpath("parent::*")).findElement(By.xpath("parent::*")).click();
-				String tempLastItemId = driver.findElements(By.className("css-1nh9iuj"))
-						.get(driver.findElements(By.className("css-1nh9iuj")).size() - 1).getAttribute("href");
-				if (tempLastItemId.equals(lastItemId)) {
-					break;
+				Thread.sleep(5000);
+				if (driver.findElements(By.xpath(
+					"//span[contains(translate(text(), 'ABCDEFGHIJKLMNOPQRSTUVWXYZ', 'abcdefghijklmnopqrstuvwxyz'), 'show more jobs')]")).size() > 0) {
+						driver.findElement(By.xpath(
+							"//span[contains(translate(text(), 'ABCDEFGHIJKLMNOPQRSTUVWXYZ', 'abcdefghijklmnopqrstuvwxyz'), 'show more jobs')]"))
+							.findElement(By.xpath("parent::*")).findElement(By.xpath("parent::*")).click();
 				} else {
-					lastItemId = tempLastItemId;
+					break;
 				}
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
 		}
-		int startJobPage = 0;
-		List<WebElement> jobPages = driver.findElements(By.className("JobsList_jobListItem__JBBUV"));
-		loop: for (int jobInd = startJobPage; jobInd < jobPages.size(); jobInd++) {
+		List<WebElement> jobPages = driver.findElements(By.className("JobsList_jobListItem__wjTHv"));
+		loop: for (int jobInd = 0; jobInd < jobPages.size(); jobInd++) {
 			try {
-				Thread.sleep(7000);
+				for (int i = 0; i < 10 && !jobPages.get(jobInd).isDisplayed() || !jobPages.get(jobInd).isEnabled(); i++) {
+					Thread.sleep(1000);
+				}
 				jobPages.get(jobInd).click();
 				Thread.sleep(2000);
 
-				driver.findElement(By.xpath(
-						"//button//span[contains(translate(text(), 'ABCDEFGHIJKLMNOPQRSTUVWXYZ', 'abcdefghijklmnopqrstuvwxyz'), 'easy apply')]"))
-						.click();
+				if (driver.findElement(By.className("JobDetails_applyButtonContainer__L36Bs")).getText().equals("Easy Apply"))
+					driver.findElement(By.className("JobDetails_applyButtonContainer__L36Bs"))
+							.click();
+				else
+					continue;
 
+				Thread.sleep(2000);
 				ArrayList<String> tabs = new ArrayList<String>(driver.getWindowHandles());
 				driver.switchTo().window(tabs.get(tabs.size() - 1));
-
 				Thread.sleep(7000);
-				String url = driver.getCurrentUrl();
 				for (int i = 0; i < 10; i++) {
 					try {
 						fillInInfo(driver);
 					} catch (Exception e) {
-						e.printStackTrace();
 						break;
 					}
 					if (this.moveOn(driver, driver.getCurrentUrl())) {
-						System.out.println("Move Break!");
 						break;
 					}
 					Thread.sleep(5000);
@@ -148,7 +143,7 @@ public class Runner2GlassDoor implements Runnable {
 
 				Thread.sleep(5000);
 				if (driver.findElements(By.xpath(
-						"//span[contains(translate(text(), 'ABCDEFGHIJKLMNOPQRSTUVWXYZ', 'abcdefghijklmnopqrstuvwxyz'), 'your application was sent.')]"))
+						"//h2[contains(translate(text(), 'ABCDEFGHIJKLMNOPQRSTUVWXYZ', 'abcdefghijklmnopqrstuvwxyz'), 'your application was sent.')]"))
 						.size() > 0) {
 					jobsAppliedTo++;
 					System.out.println("Jobs Applied To: " + jobsAppliedTo);
@@ -161,30 +156,22 @@ public class Runner2GlassDoor implements Runnable {
 
 			try {
 				Thread.sleep(5000);
-			} catch (InterruptedException e1) {
-			}
-
-			System.out.println("Number of Popups: "
-					+ driver.findElements(By.cssSelector(".e1jbctw80.ei0fd8p1.css-1n14mz9.e1q8sty40")).size());
-
-			if (driver.findElements(By.cssSelector(".e1jbctw80.ei0fd8p1.css-1n14mz9.e1q8sty40")).size() > 0) {
-				startJobPage = jobPages.size();
-				driver.findElement(By.cssSelector(".e1jbctw80.ei0fd8p1.css-1n14mz9.e1q8sty40")).click();
-			}
+			} catch (InterruptedException e1) {}
 		}
 		driver.close();
 		JOptionPane.showMessageDialog(null, jobsAppliedTo + " Jobs Applied To!", "Finish", JOptionPane.PLAIN_MESSAGE);
 	}
 
 	public boolean moveOn(WebDriver driver, String url) throws InterruptedException {
-		System.out.println("Move On:");
+		if (driver.findElements(By.className("gnav-CookiePrivacyNoticeButton")).size() > 0)
+			driver.findElement(By.className("gnav-CookiePrivacyNoticeButton")).click();
+		Thread.sleep(2000);
 		if (driver.findElements(By.className("ia-continueButton")).size() > 0) {
 			Thread.sleep(7000);
 			try {
 				driver.findElement(By.className("ia-continueButton")).click();
 			} catch (Exception e) {
 				e.printStackTrace();
-				System.out.println("Here I Am!!!");
 			}
 		} else if (driver.findElements(By.xpath(
 				"//button//div[contains(translate(text(), 'ABCDEFGHIJKLMNOPQRSTUVWXYZ', 'abcdefghijklmnopqrstuvwxyz'), 'submit your application')]"))
@@ -207,8 +194,8 @@ public class Runner2GlassDoor implements Runnable {
 					.click();
 			Thread.sleep(5000);
 		}
-
-		return false;
+		Thread.sleep(2000);
+		return driver.getCurrentUrl().equals(url);
 
 	}
 
@@ -217,7 +204,7 @@ public class Runner2GlassDoor implements Runnable {
 	}
 
 	public void fillInInfo(WebDriver driver) throws InterruptedException {
-		System.out.println("Fill In Info");
+		Thread.sleep(2000);
 
 		if (driver.findElements(By.id("resume-display-buttonHeader")).size() > 0) {
 			Thread.sleep(7000);
@@ -232,7 +219,6 @@ public class Runner2GlassDoor implements Runnable {
 				driver.findElement(By.id("resume-upload")).submit();
 			} catch (Exception e) {
 			}
-			System.out.println(driver.findElements(By.id("resume-upload")).size());
 		}
 
 		for (String b : btn) {
@@ -251,11 +237,7 @@ public class Runner2GlassDoor implements Runnable {
 			clickXpathsIfElse(driver, setIf, setIfThen, setElse);
 		}
 
-		List<WebElement> labels = driver.findElements(By.cssSelector(".css-dtssv9.es2vvo70")).size() > 0
-				? driver.findElements(By.cssSelector(".css-dtssv9.es2vvo70"))
-				: driver.findElements(By.cssSelector(".css-132vple.es2vvo70")).size() > 0
-						? driver.findElements(By.cssSelector(".css-132vple.es2vvo70"))
-						: driver.findElements(By.cssSelector(".css-1v67kj9.e1wnkr790"));
+		List<WebElement> labels = driver.findElements(By.cssSelector(".css-1v67kj9.e1wnkr790"));
 		for (WebElement label : labels) {
 			for (ArrayList<String> set : this.typeIfLabel) {
 				String[] setIf = new String[set.size() - 1];
@@ -273,7 +255,6 @@ public class Runner2GlassDoor implements Runnable {
 				if (driver.findElements(By.id("downshift-0-item-0")).size() > 0)
 					driver.findElement(By.id("downshift-0-item-0")).click();
 			} catch (Exception e) {
-				System.out.println("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
 				e.printStackTrace();
 			}
 		}
@@ -389,19 +370,26 @@ public class Runner2GlassDoor implements Runnable {
 	}
 
 	public void clickXpaths(WebDriver driver, String xpath) {
-		for (WebElement yearInput : driver.findElements(By.xpath(xpath))) {
-			yearInput.click();
+		try {
+			for (WebElement yearInput : driver.findElements(By.xpath(xpath))) {
+				yearInput.click();
+			}
+		} catch (Exception e) {
 		}
 	}
 
 	public void closeAdditionalTabs(WebDriver driver) {
-		System.out.println("Clossing tabs!");
 		ArrayList<String> tabs = new ArrayList<String>(driver.getWindowHandles());
 		while (tabs.size() > 1) {
 			driver.switchTo().window(tabs.get(1));
-			driver.close();
-			driver.switchTo().window(tabs.get(0));
-			tabs = new ArrayList<String>(driver.getWindowHandles());
+			try {
+				driver.close();
+				driver.switchTo().window(tabs.get(0));
+				tabs = new ArrayList<String>(driver.getWindowHandles());
+			} catch (Exception e) {
+				driver.switchTo().window(tabs.get(0));
+				break;
+			}
 		}
 	}
 
