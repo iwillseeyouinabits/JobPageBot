@@ -107,7 +107,7 @@ public class Runner2GlassDoor implements Runnable {
 					break;
 				}
 			} catch (Exception e) {
-				e.printStackTrace();
+				System.out.println("Load More Jobs On Page!");
 			}
 		}
 		List<WebElement> jobPages = driver.findElements(By.className("JobsList_jobListItem__wjTHv"));
@@ -214,7 +214,7 @@ public class Runner2GlassDoor implements Runnable {
 
 		if (driver.findElements(By.id("resume-upload")).size() > 0) {
 			driver.findElement(By.id("resume-upload"))
-					.sendKeys("C:\\Users\\isaac\\Desktop\\Java_Workspace\\JobBot\\resume.pdf");
+					.sendKeys("C:\\Users\\isaac\\Desktop\\Job_Bot\\Java\\GlassDoor\\resume.pdf");
 			try {
 				driver.findElement(By.id("resume-upload")).submit();
 			} catch (Exception e) {
@@ -238,6 +238,8 @@ public class Runner2GlassDoor implements Runnable {
 		}
 
 		List<WebElement> labels = driver.findElements(By.cssSelector(".css-1v67kj9.e1wnkr790"));
+		labels.addAll(driver.findElements(By.cssSelector(".css-1w7z444.e1wnkr790")));
+		
 		for (WebElement label : labels) {
 			for (ArrayList<String> set : this.typeIfLabel) {
 				String[] setIf = new String[set.size() - 1];
